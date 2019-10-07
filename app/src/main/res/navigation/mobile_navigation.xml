@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_meals">
+
+    <fragment
+        android:id="@+id/nav_meals"
+        android:name="com.jacob.mealplan.ui.meals.MealsFragment"
+        android:label="@string/menu_meals"
+        tools:layout="@layout/fragment_meals" />
+
+    <fragment
+        android:id="@+id/nav_mealcomponents"
+        android:name="com.jacob.mealplan.ui.mealcomponents.MealComponentsFragment"
+        android:label="@string/menu_meal_components"
+        tools:layout="@layout/fragment_meal_components" />
+</navigation>
