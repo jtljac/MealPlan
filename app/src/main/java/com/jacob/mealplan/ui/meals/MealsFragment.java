@@ -16,12 +16,13 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jacob.mealplan.MyRecyclerViewAdapter;
 import com.jacob.mealplan.R;
 import com.jacob.mealplan.ui.mealcomponents.MakeMealComponentDialogFragment;
 
 import java.io.File;
 
-public class MealsFragment extends Fragment {
+public class MealsFragment extends Fragment{
 
     private MealsViewModel mealsViewModel;
     private RecyclerView recyclerView;
