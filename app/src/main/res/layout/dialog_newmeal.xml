@@ -41,17 +41,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/TextAmount"
-            android:layout_width="wrap_content"
+        <NumberPicker
+            android:id="@+id/PickerAmount"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/textAmount"
-            android:inputType="number"
-            android:textAlignment="center"
-            android:textSize="24sp" />
+            android:layout_marginTop="0pt"/>
 
     </LinearLayout>
 

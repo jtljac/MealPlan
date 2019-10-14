@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -20,20 +19,47 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.jacob.mealplan.MyRecyclerViewAdapter;
 import com.jacob.mealplan.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class MealComponentsFragment extends Fragment implements MyRecyclerViewAdapter.ItemClickListener{
+public class MealComponentsFragment extends Fragment implements MealComponentRecyclerViewAdapter.ItemClickListener{
 
     private MealComponentsViewModel mealComponentsViewModel;
     private File[] componentFiles;
-    MyRecyclerViewAdapter adapter;
+    private ArrayList<componentPass> components;
+    MealComponentRecyclerViewAdapter adapter;
+
+    public static String convertStreamToString(InputStream is) throws IOException {
+        // http://www.java2s.com/Code/Java/File-Input-Output/ConvertInputStreamtoString.htm
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        Boolean firstLine = true;
+        while ((line = reader.readLine()) != null) {
+            if(firstLine){
+                sb.append(line);
+                firstLine = false;
+            } else {
+                sb.append("\n").append(line);
+            }
+        }
+        reader.close();
+        return sb.toString();
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        components = new ArrayList<>();
         mealComponentsViewModel =
                 ViewModelProviders.of(this).get(MealComponentsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_meal_components, container, false);
@@ -56,27 +82,29 @@ public class MealComponentsFragment extends Fragment implements MyRecyclerViewAd
         Log.i("MEALS", String.valueOf(componentFiles.length));
 
         if (componentFiles.length < 1){
-            Toast.makeText(getContext(), R.string.noMeals, Toast.LENGTH_LONG)
+            Toast.makeText(getContext(), R.string.noComponents, Toast.LENGTH_LONG)
                     .show();
+        } else {
+            for (File component:componentFiles) {
+                try {
+                    FileInputStream fin = new FileInputStream(component);
+                    String ret = convertStreamToString(fin);
+                    fin.close();
+                    components.add(new componentPass(component, new JSONObject(ret)));
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-        // data to populate the RecyclerView with
-        ArrayList<String> animalNames = new ArrayList<>();
-        animalNames.add("Horse");
-        animalNames.add("Cow");
-        animalNames.add("Camel");
-        animalNames.add("Sheep");
-        animalNames.add("Goat");
-
         // set up the RecyclerView
-        RecyclerView recyclerView = (RecyclerView) root.findViewById(R.id.componentsRecycler);
+        RecyclerView recyclerView = root.findViewById(R.id.componentsRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new MyRecyclerViewAdapter(getContext(), animalNames);
+        adapter = new MealComponentRecyclerViewAdapter(getContext(), components);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.HORIZONTAL);
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         return root;
     }
@@ -84,5 +112,8 @@ public class MealComponentsFragment extends Fragment implements MyRecyclerViewAd
     @Override
     public void onItemClick(View view, int position) {
         Toast.makeText(getContext(), "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+        DialogFragment mealMaker = new MakeMealComponentDialogFragment(adapter.getItem(position));
+        mealMaker.show(getFragmentManager(), "TAG");
     }
 }
+

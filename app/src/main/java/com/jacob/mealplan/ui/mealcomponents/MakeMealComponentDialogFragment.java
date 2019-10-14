@@ -5,9 +5,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -28,37 +30,74 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MakeMealComponentDialogFragment extends DialogFragment {
+    private componentPass components;
+    EditText textName;
+    Switch switchQuantifiable;
+    NumberPicker intAmount;
+    MakeMealComponentDialogFragment(componentPass theComponents){
+        components = theComponents;
+        Log.i("TAGTEST", theComponents.json.toString());
+    }
+
+    MakeMealComponentDialogFragment(){
+
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_newmeal, null);
-        ((Switch) dialogView.findViewById(R.id.SwitchQuantifiable)).setOnClickListener(new Switch.OnClickListener() {
+        textName = dialogView.findViewById(R.id.TextMealComponentName);
+        switchQuantifiable = dialogView.findViewById(R.id.SwitchQuantifiable);
+        intAmount = dialogView.findViewById(R.id.PickerAmount);
+        intAmount.setMaxValue(1000);
+        intAmount.setMinValue(0);
+
+        if(components != null){
+            try {
+                textName.setText(components.json.getString("Name"));
+                switchQuantifiable.setChecked(components.json.getBoolean("Quantifiable"));
+                intAmount.setValue(components.json.getInt("Amount"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        dialogView.findViewById(R.id.SwitchQuantifiable).setOnClickListener(new Switch.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialogView.findViewById(R.id.TextAmount).setEnabled(((Switch) view).isChecked());
+                intAmount.setEnabled(((Switch) view).isChecked());
             }
         });
         builder.setView(dialogView)
-                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                .setPositiveButton(((components != null) ? R.string.set : R.string.add), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        String name = ((EditText) dialogView.findViewById(R.id.TextMealComponentName)).getText().toString();
-                        boolean quantifiable = ((Switch) dialogView.findViewById(R.id.SwitchQuantifiable)).isChecked();
-                        int amount = Integer.valueOf((((EditText) dialogView.findViewById(R.id.TextAmount)).getText().toString()));
+                        String name = (textName.getText().toString());
+                        boolean quantifiable = switchQuantifiable.isChecked();
+                        int amount = intAmount.getValue();
                         JSONObject jsonObject = new JSONObject();
                         try {
                             jsonObject.put("Name", name);
                             jsonObject.put("Quantifiable", quantifiable);
                             jsonObject.put("Amount", amount);
-                            File dir = getContext().getDir("MealComponents", Context.MODE_PRIVATE);
-                            File file = new File(dir, name);
-                            int count = 0;
-                            while(file.exists()){
-                                count++;
-                                file = new File(dir, name + count);
+                            File dir;
+                            File file;
+                            if(components != null){
+                                file = components.file;
+                                file.delete();
+                                file.createNewFile();
+                            } else {
+                                dir = getContext().getDir("MealComponents", Context.MODE_PRIVATE);
+                                file = new File(dir, name);
+                                int count = 0;
+                                while (file.exists()) {
+                                    count++;
+                                    file = new File(dir, name + count);
+                                }
+                                file.createNewFile();
                             }
-                            file.createNewFile();
                             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
                             writer.write(jsonObject.toString());
                             writer.flush();

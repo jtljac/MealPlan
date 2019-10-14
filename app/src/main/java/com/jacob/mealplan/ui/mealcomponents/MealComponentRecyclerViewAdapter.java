@@ -1,4 +1,4 @@
-package com.jacob.mealplan;
+package com.jacob.mealplan.ui.mealcomponents;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,16 +8,21 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.jacob.mealplan.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
+public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealComponentRecyclerViewAdapter.ViewHolder> {
 
-    private List<String> mData;
+    private List<componentPass> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     // data is passed into the constructor
-    public MyRecyclerViewAdapter(Context context, List<String> data) {
+    public MealComponentRecyclerViewAdapter(Context context, List<componentPass> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -32,14 +37,20 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String animal = mData.get(position);
+        String animal = null;
+        try {
+            animal = mData.get(position).json.getString("Name");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         holder.myTextView.setText(animal);
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
-        return mData.size();
+        if(mData != null) return mData.size();
+        return 0;
     }
 
 
@@ -60,7 +71,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
 
     // convenience method for getting data at click position
-    public String getItem(int id) {
+    public componentPass getItem(int id) {
         return mData.get(id);
     }
 
