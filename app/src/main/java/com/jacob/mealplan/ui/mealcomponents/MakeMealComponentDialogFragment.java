@@ -31,16 +31,20 @@ import java.util.List;
 
 public class MakeMealComponentDialogFragment extends DialogFragment {
     private componentPass components;
+    private MealComponentRecyclerViewAdapter recycler;
+    private MealComponentsFragment fragment;
     EditText textName;
     Switch switchQuantifiable;
     NumberPicker intAmount;
-    MakeMealComponentDialogFragment(componentPass theComponents){
+    MakeMealComponentDialogFragment(componentPass theComponents, MealComponentsFragment theFragment){
         components = theComponents;
+        fragment = theFragment;
         Log.i("TAGTEST", theComponents.json.toString());
     }
 
-    MakeMealComponentDialogFragment(){
-
+    MakeMealComponentDialogFragment(MealComponentRecyclerViewAdapter theRecycler, MealComponentsFragment theFragment){
+        recycler = theRecycler;
+        fragment = theFragment;
     }
 
     @Override
@@ -78,12 +82,13 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
                         boolean quantifiable = switchQuantifiable.isChecked();
                         int amount = intAmount.getValue();
                         JSONObject jsonObject = new JSONObject();
+                        File dir;
+                        File file;
                         try {
                             jsonObject.put("Name", name);
                             jsonObject.put("Quantifiable", quantifiable);
                             jsonObject.put("Amount", amount);
-                            File dir;
-                            File file;
+
                             if(components != null){
                                 file = components.file;
                                 file.delete();
@@ -102,13 +107,14 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
                             writer.write(jsonObject.toString());
                             writer.flush();
                             writer.close();
-
+                            fragment.updateMeals(new componentPass(file, jsonObject));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

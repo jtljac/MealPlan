@@ -1,6 +1,10 @@
 package com.jacob.mealplan.ui.mealcomponents;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,11 +14,13 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,6 +44,8 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
     private File[] componentFiles;
     private ArrayList<componentPass> components;
     MealComponentRecyclerViewAdapter adapter;
+    MealComponentsFragment thisFragment = this;
+
 
     public static String convertStreamToString(InputStream is) throws IOException {
         // http://www.java2s.com/Code/Java/File-Input-Output/ConvertInputStreamtoString.htm
@@ -73,7 +81,7 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment mealMaker = new MakeMealComponentDialogFragment();
+                DialogFragment mealMaker = new MakeMealComponentDialogFragment(adapter, thisFragment);
                 mealMaker.show(getFragmentManager(), "TAG");
             }
         });
@@ -100,19 +108,26 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
         // set up the RecyclerView
         RecyclerView recyclerView = root.findViewById(R.id.componentsRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new MealComponentRecyclerViewAdapter(getContext(), components);
+        adapter = new MealComponentRecyclerViewAdapter(getContext(), components, this.getActivity());
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-
+        ItemTouchHelper itemTouchHelper = new
+                ItemTouchHelper(new SwipeToDeleteCallback(adapter));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
         return root;
+    }
+
+    public void updateMeals(componentPass newComponent){
+        components.add(newComponent);
+        adapter.setItems(components);
     }
 
     @Override
     public void onItemClick(View view, int position) {
         Toast.makeText(getContext(), "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
-        DialogFragment mealMaker = new MakeMealComponentDialogFragment(adapter.getItem(position));
+        DialogFragment mealMaker = new MakeMealComponentDialogFragment(adapter.getItem(position), this);
         mealMaker.show(getFragmentManager(), "TAG");
     }
 }
