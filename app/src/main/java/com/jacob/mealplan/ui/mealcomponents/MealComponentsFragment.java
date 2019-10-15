@@ -108,7 +108,7 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
         // set up the RecyclerView
         RecyclerView recyclerView = root.findViewById(R.id.componentsRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new MealComponentRecyclerViewAdapter(getContext(), components, this.getActivity());
+        adapter = new MealComponentRecyclerViewAdapter(getContext(), components, this.getActivity(), this);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
@@ -119,16 +119,24 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
         return root;
     }
 
-    public void updateMeals(componentPass newComponent){
+    public void editComponent(int position){
+        DialogFragment mealMaker = new MakeMealComponentDialogFragment(adapter.getItem(position), position, this);
+        mealMaker.show(getFragmentManager(), "TAG");
+    }
+
+    public void updateComponents(componentPass newComponent){
         components.add(newComponent);
+        adapter.setItems(components);
+    }
+
+    public void updateComponents(componentPass newComponent, int position){
+        components.set(position, newComponent);
         adapter.setItems(components);
     }
 
     @Override
     public void onItemClick(View view, int position) {
         Toast.makeText(getContext(), "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
-        DialogFragment mealMaker = new MakeMealComponentDialogFragment(adapter.getItem(position), this);
-        mealMaker.show(getFragmentManager(), "TAG");
     }
 }
 

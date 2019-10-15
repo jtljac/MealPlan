@@ -24,21 +24,20 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import java.util.List;
 
 public class MakeMealComponentDialogFragment extends DialogFragment {
     private componentPass components;
     private MealComponentRecyclerViewAdapter recycler;
-    private MealComponentsFragment fragment;
+    private int position;
+    public MealComponentsFragment fragment;
     EditText textName;
     Switch switchQuantifiable;
     NumberPicker intAmount;
-    MakeMealComponentDialogFragment(componentPass theComponents, MealComponentsFragment theFragment){
+    MakeMealComponentDialogFragment(componentPass theComponents, int thePosition, MealComponentsFragment theFragment){
         components = theComponents;
         fragment = theFragment;
+        position = thePosition;
         Log.i("TAGTEST", theComponents.json.toString());
     }
 
@@ -107,7 +106,8 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
                             writer.write(jsonObject.toString());
                             writer.flush();
                             writer.close();
-                            fragment.updateMeals(new componentPass(file, jsonObject));
+                            if(components != null) fragment.updateComponents(new componentPass(file, jsonObject), position);
+                            else fragment.updateComponents(new componentPass(file, jsonObject));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT);

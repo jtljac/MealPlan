@@ -15,17 +15,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
     private MealComponentRecyclerViewAdapter mAdapter;
-
-    private Drawable icon;
-    private final ColorDrawable background;
+    private Drawable iconDelete;
+    private final ColorDrawable backgroundDelete;
+    private Drawable iconEdit;
+    private final ColorDrawable backgroundEdit;
 
 
     public SwipeToDeleteCallback(MealComponentRecyclerViewAdapter adapter) {
         super(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         mAdapter = adapter;
-        icon = ContextCompat.getDrawable(mAdapter.getContext(),
+        iconDelete = ContextCompat.getDrawable(mAdapter.getContext(),
                 R.drawable.ic_delete);
-        background = new ColorDrawable(Color.RED);
+        backgroundDelete = new ColorDrawable(Color.RED);
+
+        iconEdit = ContextCompat.getDrawable(mAdapter.getContext(),
+                R.drawable.ic_edit);
+        backgroundEdit = new ColorDrawable(Color.GREEN);
     }
 
     @Override
@@ -37,7 +42,12 @@ public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         int position = viewHolder.getAdapterPosition();
-        mAdapter.deleteItem(position);
+        Log.i("TAGT", String.valueOf(direction));
+        if(direction == 4) mAdapter.deleteItem(position);
+        else if(direction == 8) {
+            mAdapter.fragment.editComponent(position);
+            mAdapter.notifyItemChanged(position);
+        }
     }
 
     @Override
@@ -47,30 +57,36 @@ public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
         View itemView = viewHolder.itemView;
         int backgroundCornerOffset = 20; //so background is behind the rounded corners of itemView
 
-        int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
-        int iconTop = itemView.getTop() + (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
-        int iconBottom = iconTop + icon.getIntrinsicHeight();
-
+        // Edit
         if (dX > 0) { // Swiping to the right
-            int iconLeft = itemView.getRight() - iconMargin - icon.getIntrinsicWidth();
-            int iconRight = itemView.getRight() - iconMargin;
-            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+            int iconMargin = (itemView.getHeight() - iconEdit.getIntrinsicHeight()) / 2;
+            int iconTop = itemView.getTop() + (itemView.getHeight() - iconEdit.getIntrinsicHeight()) / 2;
+            int iconBottom = iconTop + iconEdit.getIntrinsicHeight();
 
-            background.setBounds(itemView.getLeft(), itemView.getTop(),
+            int iconLeft = itemView.getLeft() + iconMargin;
+            int iconRight = itemView.getLeft() + iconMargin + iconEdit.getIntrinsicWidth();
+            iconEdit.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+
+            backgroundEdit.setBounds(itemView.getLeft(), itemView.getTop(),
                     itemView.getLeft() + ((int) dX) + backgroundCornerOffset, itemView.getBottom());
+            backgroundEdit.draw(c);
+            iconEdit.draw(c);
         } else if (dX < 0) { // Swiping to the left
-            int iconLeft = itemView.getRight() - iconMargin - icon.getIntrinsicWidth();
+            int iconMargin = (itemView.getHeight() - iconDelete.getIntrinsicHeight()) / 2;
+            int iconTop = itemView.getTop() + (itemView.getHeight() - iconDelete.getIntrinsicHeight()) / 2;
+            int iconBottom = iconTop + iconDelete.getIntrinsicHeight();
+
+            int iconLeft = itemView.getRight() - iconMargin - iconDelete.getIntrinsicWidth();
             int iconRight = itemView.getRight() - iconMargin;
-            Log.i("TAG", String.valueOf(itemView.getLeft()));
-            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+            iconDelete.setBounds(iconLeft, iconTop, iconRight, iconBottom);
 
-            background.setBounds(itemView.getRight() + ((int) dX) - backgroundCornerOffset,
+            backgroundDelete.setBounds(itemView.getRight() + ((int) dX) - backgroundCornerOffset,
                     itemView.getTop(), itemView.getRight(), itemView.getBottom());
+            backgroundDelete.draw(c);
+            iconDelete.draw(c);
         } else { // view is unSwiped
-            background.setBounds(0, 0, 0, 0);
+            backgroundEdit.setBounds(0, 0, 0, 0);
+            backgroundDelete.setBounds(0, 0, 0, 0);
         }
-
-        background.draw(c);
-        icon.draw(c);
     }
 }

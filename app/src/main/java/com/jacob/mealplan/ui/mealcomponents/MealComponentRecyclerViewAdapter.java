@@ -29,16 +29,18 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private Activity mActivity;
+    public MealComponentsFragment fragment;
 
     private componentPass mRecentlyDeletedItem;
     private int mRecentlyDeletedItemPosition;
 
     // data is passed into the constructor
-    public MealComponentRecyclerViewAdapter(Context context, List<componentPass> data, Activity activity) {
+    public MealComponentRecyclerViewAdapter(Context context, List<componentPass> data, Activity activity, MealComponentsFragment theFragment) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.mActivity = activity;
+        fragment = theFragment;
     }
 
     public Context getContext() {
