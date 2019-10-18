@@ -14,10 +14,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.jacob.mealplan.R;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
