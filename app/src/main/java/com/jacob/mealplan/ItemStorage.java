@@ -11,15 +11,11 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ItemStorage {
     private static ItemStorage instance;
@@ -33,6 +29,15 @@ public class ItemStorage {
     public static ItemStorage getInstance() {
         if(instance == null) instance = new ItemStorage();
         return instance;
+    }
+
+    public void setup(Context context){
+        loadComponents(context);
+        loadMeals(context);
+    }
+
+    public void loadMeals(Context context){
+
     }
 
     public void loadComponents(Context context){
@@ -63,18 +68,22 @@ public class ItemStorage {
         }
     }
 
-    private void addNewComponent(JSONObject item, Context context) throws JSONException, IOException {
+    public void addNewComponent(JSONObject item, Context context) throws JSONException, IOException {
         Integer id = maxComponentID + 1;
         item.put("ID", id);
         File dir = context.getDir("MealComponents", Context.MODE_PRIVATE);
-        File file = new File(dir, String.valueOf(id));
-        file.createNewFile();
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-        writer.write(item.toString());
-        writer.flush();
-        writer.close();
+        File file = writeToFile(new File(dir, String.valueOf(id)), item);
         components.append(id, new ItemPass(file, item));
         checkMaxComponentID(id);
+    }
+
+    public void modifyComponentByKey(ItemPass item, int key) throws IOException {
+        writeToFile(item.file, item.json);
+        components.append(key, item);
+    }
+
+    public void modifyComponentByPosition(ItemPass item, int position) throws IOException {
+        modifyComponentByKey(item, components.keyAt(position));
     }
 
     private void checkMaxComponentID(int id){
@@ -82,6 +91,16 @@ public class ItemStorage {
     }
     private void checkMaxMealID(int id){
         if (id > maxMealID) maxMealID = id;
+    }
+
+    private File writeToFile(File file, JSONObject json) throws IOException {
+        if(file.exists()) file.delete();
+        file.createNewFile();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+        writer.write(json.toString());
+        writer.flush();
+        writer.close();
+        return file;
     }
 
     private static String getFileContents(File file) throws IOException {

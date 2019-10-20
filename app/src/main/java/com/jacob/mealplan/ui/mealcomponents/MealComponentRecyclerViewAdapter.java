@@ -2,6 +2,7 @@ package com.jacob.mealplan.ui.mealcomponents;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.jacob.mealplan.ItemPass;
+import com.jacob.mealplan.ItemStorage;
 import com.jacob.mealplan.R;
 
 import org.json.JSONException;
@@ -20,24 +22,21 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.List;
 
 public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealComponentRecyclerViewAdapter.ViewHolder> {
     private Context context;
-    private List<ItemPass> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private Activity mActivity;
     public MealComponentsFragment fragment;
 
     private ItemPass mRecentlyDeletedItem;
-    private int mRecentlyDeletedItemPosition;
+    private int mRecentlyDeletedItemKey;
 
     // data is passed into the constructor
-    public MealComponentRecyclerViewAdapter(Context context, List<ItemPass> data, Activity activity, MealComponentsFragment theFragment) {
+    public MealComponentRecyclerViewAdapter(Context context, Activity activity, MealComponentsFragment theFragment) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
         this.mActivity = activity;
         fragment = theFragment;
     }
@@ -56,27 +55,34 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String animal = null;
+        String item = null;
+        String amount = null;
         try {
-            animal = mData.get(position).json.getString("Name");
+            item = ItemStorage.getInstance().components.valueAt(position).json.getString("Name");
+            amount = ItemStorage.getInstance().components.valueAt(position).json.getString("Amount");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        holder.myTextView.setText(animal);
+        holder.nameText.setText(item);
+        holder.amountText.setText(amount);
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
-        if(mData != null) return mData.size();
-        return 0;
+        return ItemStorage.getInstance().components.size();
     }
 
     public void deleteItem(int position) {
         mRecentlyDeletedItem = getItem(position);
-        mRecentlyDeletedItemPosition = position;
-        mData.get(position).file.delete();
-        mData.remove(position);
+        mRecentlyDeletedItemKey = ItemStorage.getInstance().components.keyAt(position);
+        try {
+            Log.i("Testes", mRecentlyDeletedItem.json.getString("Name"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ItemStorage.getInstance().components.valueAt(position).file.delete();
+        ItemStorage.getInstance().components.removeAt(position);
         notifyItemRemoved(position);
         showUndoSnackbar();
     }
@@ -89,14 +95,13 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
         snackbar.show();
     }
 
-    public void setItems(List<ItemPass> newList){
-        mData = newList;
+    public void updateItems(){
         notifyDataSetChanged();
     }
 
     private void undoDelete() {
         if(!mRecentlyDeletedItem.file.exists()) {
-            mData.add(mRecentlyDeletedItemPosition,
+            ItemStorage.getInstance().components.append(mRecentlyDeletedItemKey,
                     mRecentlyDeletedItem);
 
             BufferedWriter writer = null;
@@ -106,7 +111,7 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
                 writer.write(mRecentlyDeletedItem.json.toString());
                 writer.flush();
                 writer.close();
-                notifyItemInserted(mRecentlyDeletedItemPosition);
+                notifyItemInserted(ItemStorage.getInstance().components.indexOfKey(mRecentlyDeletedItemKey));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -117,11 +122,13 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextView;
+        TextView nameText;
+        TextView amountText;
 
         ViewHolder(View itemView) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.componentName);
+            nameText = itemView.findViewById(R.id.componentName);
+            amountText = itemView.findViewById(R.id.componentQuantity);
             itemView.setOnClickListener(this);
         }
 
@@ -133,7 +140,9 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
 
     // convenience method for getting data at click position
     public ItemPass getItem(int id) {
-        return mData.get(id);
+        Log.i("Tester", String.valueOf(id));
+        Log.i("Testers", String.valueOf(ItemStorage.getInstance().components.keyAt(id)));
+        return ItemStorage.getInstance().components.valueAt(id);
     }
 
     // allows clicks events to be caught

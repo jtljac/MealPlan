@@ -1,8 +1,6 @@
 package com.jacob.mealplan.ui.mealcomponents;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,25 +18,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.jacob.mealplan.ItemPass;
+import com.jacob.mealplan.ItemStorage;
 import com.jacob.mealplan.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 public class MealComponentsFragment extends Fragment implements MealComponentRecyclerViewAdapter.ItemClickListener{
 
     private MealComponentsViewModel mealComponentsViewModel;
-    private File[] componentFiles;
-    private ArrayList<ItemPass> components;
     MealComponentRecyclerViewAdapter adapter;
     MealComponentsFragment thisFragment = this;
 
@@ -80,36 +70,22 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
             }
         });
 
-        componentFiles = root.getContext().getDir("MealComponents", Context.MODE_PRIVATE).listFiles();
-        Log.i("MEALS", String.valueOf(componentFiles.length));
-
-        if (componentFiles.length < 1){
+        if (ItemStorage.getInstance().components.size() < 1) {
             Toast.makeText(getContext(), R.string.noComponents, Toast.LENGTH_LONG)
                     .show();
-        } else {
-            for (File component:componentFiles) {
-                try {
-                    FileInputStream fin = new FileInputStream(component);
-                    String ret = convertStreamToString(fin);
-                    fin.close();
-                    components.add(new ItemPass(component, new JSONObject(ret)));
-                } catch (JSONException | IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
         // set up the RecyclerView
         RecyclerView recyclerView = root.findViewById(R.id.componentsRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new MealComponentRecyclerViewAdapter(getContext(), components, this.getActivity(), this);
+        adapter = new MealComponentRecyclerViewAdapter(getContext(), this.getActivity(), this);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         ItemTouchHelper itemTouchHelper = new
-                ItemTouchHelper(new PartialSwipeToDeleteEditCallback(adapter));
+                ItemTouchHelper(new SwipeToDeleteEditCallback(adapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
         return root;
     }
@@ -119,14 +95,8 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
         mealMaker.show(getFragmentManager(), "TAG");
     }
 
-    public void updateComponents(ItemPass newComponent){
-        components.add(newComponent);
-        adapter.setItems(components);
-    }
-
-    public void updateComponents(ItemPass newComponent, int position){
-        components.set(position, newComponent);
-        adapter.setItems(components);
+    public void updateComponents(){
+        adapter.updateItems();
     }
 
     @Override

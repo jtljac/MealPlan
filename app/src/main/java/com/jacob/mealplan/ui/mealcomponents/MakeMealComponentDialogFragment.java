@@ -2,7 +2,6 @@ package com.jacob.mealplan.ui.mealcomponents;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,16 +15,13 @@ import android.widget.Toast;
 import androidx.fragment.app.DialogFragment;
 
 import com.jacob.mealplan.ItemPass;
+import com.jacob.mealplan.ItemStorage;
 import com.jacob.mealplan.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 public class MakeMealComponentDialogFragment extends DialogFragment {
     private ItemPass components;
@@ -82,33 +78,18 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
                         boolean quantifiable = switchQuantifiable.isChecked();
                         int amount = intAmount.getValue();
                         JSONObject jsonObject = new JSONObject();
-                        File dir;
-                        File file;
                         try {
                             jsonObject.put("Name", name);
                             jsonObject.put("Quantifiable", quantifiable);
                             jsonObject.put("Amount", amount);
 
                             if(components != null){
-                                file = components.file;
-                                file.delete();
-                                file.createNewFile();
+                                ItemStorage.getInstance().modifyComponentByPosition(new ItemPass(components.file, jsonObject), position);
                             } else {
-                                dir = getContext().getDir("MealComponents", Context.MODE_PRIVATE);
-                                file = new File(dir, name);
-                                int count = 0;
-                                while (file.exists()) {
-                                    count++;
-                                    file = new File(dir, name + count);
-                                }
-                                file.createNewFile();
+                                ItemStorage.getInstance().addNewComponent(jsonObject, getContext());
                             }
-                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-                            writer.write(jsonObject.toString());
-                            writer.flush();
-                            writer.close();
-                            if(components != null) fragment.updateComponents(new ItemPass(file, jsonObject), position);
-                            else fragment.updateComponents(new ItemPass(file, jsonObject));
+                            fragment.updateComponents();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT);
