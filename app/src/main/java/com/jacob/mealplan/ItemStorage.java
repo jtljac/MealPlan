@@ -8,10 +8,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +53,9 @@ public class ItemStorage {
                         checkMaxComponentID(item.json.getInt("ID"));
                     }
                 }
-                for (item:conflicts) {
-
+                for (ItemPass conflictedItem:conflicts) {
+                    conflictedItem.file.delete();
+                    addNewComponent(conflictedItem.json, context);
                 }
             }
         } catch (JSONException | IOException e) {
@@ -58,9 +63,17 @@ public class ItemStorage {
         }
     }
 
-    private void addComponent(ItemPass item) throws JSONException {
+    private void addNewComponent(JSONObject item, Context context) throws JSONException, IOException {
         Integer id = maxComponentID + 1;
-        item.json.put("ID", id);
+        item.put("ID", id);
+        File dir = context.getDir("MealComponents", Context.MODE_PRIVATE);
+        File file = new File(dir, String.valueOf(id));
+        file.createNewFile();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+        writer.write(item.toString());
+        writer.flush();
+        writer.close();
+        components.append(id, new ItemPass(file, item));
         checkMaxComponentID(id);
     }
 
