@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.jacob.mealplan.ItemPass;
 import com.jacob.mealplan.R;
 
 import org.json.JSONException;
@@ -23,17 +24,17 @@ import java.util.List;
 
 public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealComponentRecyclerViewAdapter.ViewHolder> {
     private Context context;
-    private List<componentPass> mData;
+    private List<ItemPass> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private Activity mActivity;
     public MealComponentsFragment fragment;
 
-    private componentPass mRecentlyDeletedItem;
+    private ItemPass mRecentlyDeletedItem;
     private int mRecentlyDeletedItemPosition;
 
     // data is passed into the constructor
-    public MealComponentRecyclerViewAdapter(Context context, List<componentPass> data, Activity activity, MealComponentsFragment theFragment) {
+    public MealComponentRecyclerViewAdapter(Context context, List<ItemPass> data, Activity activity, MealComponentsFragment theFragment) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
@@ -88,7 +89,7 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
         snackbar.show();
     }
 
-    public void setItems(List<componentPass> newList){
+    public void setItems(List<ItemPass> newList){
         mData = newList;
         notifyDataSetChanged();
     }
@@ -131,7 +132,7 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
     }
 
     // convenience method for getting data at click position
-    public componentPass getItem(int id) {
+    public ItemPass getItem(int id) {
         return mData.get(id);
     }
 

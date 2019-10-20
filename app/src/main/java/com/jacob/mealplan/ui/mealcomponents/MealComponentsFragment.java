@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jacob.mealplan.ItemPass;
 import com.jacob.mealplan.R;
 
 import org.json.JSONException;
@@ -37,7 +38,7 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
 
     private MealComponentsViewModel mealComponentsViewModel;
     private File[] componentFiles;
-    private ArrayList<componentPass> components;
+    private ArrayList<ItemPass> components;
     MealComponentRecyclerViewAdapter adapter;
     MealComponentsFragment thisFragment = this;
 
@@ -60,9 +61,7 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
         return sb.toString();
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        components = new ArrayList<>();
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mealComponentsViewModel =
                 ViewModelProviders.of(this).get(MealComponentsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_meal_components, container, false);
@@ -93,7 +92,7 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
                     FileInputStream fin = new FileInputStream(component);
                     String ret = convertStreamToString(fin);
                     fin.close();
-                    components.add(new componentPass(component, new JSONObject(ret)));
+                    components.add(new ItemPass(component, new JSONObject(ret)));
                 } catch (JSONException | IOException e) {
                     e.printStackTrace();
                 }
@@ -108,8 +107,9 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
         recyclerView.setAdapter(adapter);
 
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+
         ItemTouchHelper itemTouchHelper = new
-                ItemTouchHelper(new SwipeToDeleteEditCallback(adapter));
+                ItemTouchHelper(new PartialSwipeToDeleteEditCallback(adapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
         return root;
     }
@@ -119,12 +119,12 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
         mealMaker.show(getFragmentManager(), "TAG");
     }
 
-    public void updateComponents(componentPass newComponent){
+    public void updateComponents(ItemPass newComponent){
         components.add(newComponent);
         adapter.setItems(components);
     }
 
-    public void updateComponents(componentPass newComponent, int position){
+    public void updateComponents(ItemPass newComponent, int position){
         components.set(position, newComponent);
         adapter.setItems(components);
     }

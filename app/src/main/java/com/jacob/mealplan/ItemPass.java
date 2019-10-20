@@ -1,13 +1,13 @@
-package com.jacob.mealplan.ui.mealcomponents;
+package com.jacob.mealplan;
 
 import org.json.JSONObject;
 
 import java.io.File;
 
-public class componentPass {
+public class ItemPass {
     public File file;
     public JSONObject json;
-    componentPass(File theFile, JSONObject theObject){
+    public ItemPass(File theFile, JSONObject theObject){
         file = theFile;
         json = theObject;
     }
