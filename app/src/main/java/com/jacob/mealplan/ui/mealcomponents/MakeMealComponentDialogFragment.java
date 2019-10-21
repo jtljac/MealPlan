@@ -28,9 +28,10 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
     private MealComponentRecyclerViewAdapter recycler;
     private int position;
     public MealComponentsFragment fragment;
-    EditText textName;
-    Switch switchQuantifiable;
-    NumberPicker intAmount;
+    private EditText textName;
+    private Switch switchQuantifiable;
+    private NumberPicker intAmount;
+
     MakeMealComponentDialogFragment(ItemPass theComponents, int thePosition, MealComponentsFragment theFragment){
         components = theComponents;
         fragment = theFragment;
@@ -48,10 +49,10 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_newComponent, null);
+        final View dialogView = inflater.inflate(R.layout.dialog_newcomponent, null);
 
         // Inputs
-        textName = dialogView.findViewById(R.id.TextMealComponentName);
+        textName = dialogView.findViewById(R.id.TextMealDescription);
         switchQuantifiable = dialogView.findViewById(R.id.SwitchQuantifiable);
         intAmount = dialogView.findViewById(R.id.PickerAmount);
         intAmount.setMaxValue(1000);

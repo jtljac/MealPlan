@@ -21,4 +21,5 @@
     <string name="set">Set</string>
     <string name="snack_bar_undo">Undo</string>
     <string name="snack_bar_text">Did you mean to delete that?</string>
+    <string name="description">Description</string>
 </resources>

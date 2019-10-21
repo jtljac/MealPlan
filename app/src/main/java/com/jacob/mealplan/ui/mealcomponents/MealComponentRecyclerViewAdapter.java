@@ -33,7 +33,6 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
     private ItemPass mRecentlyDeletedItem;
     private int mRecentlyDeletedItemKey;
 
-    // data is passed into the constructor
     public MealComponentRecyclerViewAdapter(Context context, Activity activity, MealComponentsFragment theFragment) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
@@ -52,19 +51,20 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
         return new ViewHolder(view);
     }
 
-    // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         String item = null;
         String amount = null;
+        boolean quantifiable = false;
         try {
             item = ItemStorage.getInstance().components.valueAt(position).json.getString("Name");
             amount = ItemStorage.getInstance().components.valueAt(position).json.getString("Amount");
+            quantifiable = ItemStorage.getInstance().components.valueAt(position).json.getBoolean("Quantifiable");
         } catch (JSONException e) {
             e.printStackTrace();
         }
         holder.nameText.setText(item);
-        holder.amountText.setText(amount);
+        if (quantifiable) holder.amountText.setText(amount);
     }
 
     // total number of rows

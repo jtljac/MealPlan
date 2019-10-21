@@ -128,6 +128,7 @@ public class ItemStorage {
         item.put("ID", id);
         // Get the directory that stores the meal components
         File dir = context.getDir("MealComponents", Context.MODE_PRIVATE);
+
         // Create the name of the file, accounting for files that may already have that name
         StringBuilder name = new StringBuilder(item.getString("Name"));
         File file = new File(dir, name.toString());
@@ -137,62 +138,103 @@ public class ItemStorage {
         }
 
         // Write the json to the file and add it to memory
-        writeToFile(file, item);
+        writeToJsonFile(file, item);
         components.append(id, new ItemPass(file, item));
         checkMaxComponentID(id);
     }
 
     public void addNewMeal(JSONObject item, Context context) throws JSONException, IOException {
+        /*
+         * Create a new meal, adding it to memory and stores the json in a file
+         */
         Integer id = maxMealID + 1;
         item.put("ID", id);
+        // Get the Meal Directory
         File dir = context.getDir("Meals", Context.MODE_PRIVATE);
+
+        // Create the name of the file
         StringBuilder name = new StringBuilder(item.getString("Name"));
         File file = new File(dir, name.toString());
         while (file.exists()){
             name.append("1");
             file = new File(dir, name.toString());
         }
-        writeToFile(file, item);
+
+        // Write the JSON to the file and add it to memory
+        writeToJsonFile(file, item);
         meals.append(id, new ItemPass(file, item));
         checkMaxMealID(id);
     }
 
     public void modifyComponentByKey(ItemPass item, int key) throws IOException {
-        writeToFile(item.file, item.json);
+        /*
+         * Modify a component
+         * Takes the item to modify, and the key of the object
+         */
+        writeToJsonFile(item.file, item.json);
         components.append(key, item);
     }
 
     public void modifyComponentByPosition(ItemPass item, int position) throws IOException {
+        /*
+         * Modify a component
+         * Takes the item to modify, and the position of the object
+         */
         modifyComponentByKey(item, components.keyAt(position));
     }
 
     public void modifyMealByKey(ItemPass item, int key) throws IOException {
-        writeToFile(item.file, item.json);
+        /*
+         * Modify a meal
+         * Takes the item to modify, and the key of the object
+         */
+        writeToJsonFile(item.file, item.json);
         meals.append(key, item);
     }
 
     public void modifyMealByPosition(ItemPass item, int position) throws IOException {
+        /*
+         * Modify a Meal
+         * Takes the item to modify, and the position of the object
+         */
         modifyMealByKey(item, meals.keyAt(position));
     }
 
     private void checkMaxComponentID(int id){
+        /*
+         * Check if the given ID is larger than the current stored one, stores the new ID if it is
+         */
         if (id > maxComponentID) maxComponentID = id;
     }
     private void checkMaxMealID(int id){
+        /*
+         * Check if the given ID is larger than the current stored one, stores the new ID if it is
+         */
         if (id > maxMealID) maxMealID = id;
     }
 
-    private File writeToFile(File file, JSONObject json) throws IOException {
+    private File writeToJsonFile(File file, JSONObject json) throws IOException {
+        /*
+         * Writes the given json to the given file
+         */
+        // Delete the file if it already exists, we're definitely overwriting it
         if(file.exists()) file.delete();
         file.createNewFile();
+
+        // Create a writer
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
         writer.write(json.toString());
+
+        // Force the writer to save the file and close it
         writer.flush();
         writer.close();
         return file;
     }
 
     private static String getFileContents(File file) throws IOException {
+        /*
+         * Get the Contents of the given File
+         */
         // http://www.java2s.com/Code/Java/File-Input-Output/ConvertInputStreamtoString.htm
         FileInputStream fin = new FileInputStream(file);
         BufferedReader reader = new BufferedReader(new InputStreamReader(fin));

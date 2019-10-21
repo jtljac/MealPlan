@@ -13,6 +13,7 @@ import com.jacob.mealplan.R;
 
 import org.json.JSONException;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerViewAdapter.ViewHolder> {
@@ -46,6 +47,8 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
         String item = null;
         try {
             item = ItemStorage.getInstance().meals.valueAt(position).json.getString("Name");
+
+            //TODO: Logic for if quantities aren't great enough
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -62,10 +65,12 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView nameText;
+        CardView card;
 
         ViewHolder(View itemView) {
             super(itemView);
             nameText = itemView.findViewById(R.id.mealName);
+            card = itemView.findViewById(R.id.theCard);
             itemView.setOnClickListener(this);
         }
 

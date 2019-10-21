@@ -11,7 +11,7 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/TextMealComponentName"
+            android:id="@+id/textMealName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
