@@ -48,7 +48,7 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
+        View view = mInflater.inflate(R.layout.componentrecyclerview_row, parent, false);
         return new ViewHolder(view);
     }
 
@@ -95,9 +95,7 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
         snackbar.show();
     }
 
-    public void updateItems(){
-        notifyDataSetChanged();
-    }
+
 
     private void undoDelete() {
         if(!mRecentlyDeletedItem.file.exists()) {
@@ -120,6 +118,10 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
         }
     }
 
+    public void updateItems() {
+        this.notifyDataSetChanged();
+    }
+
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView nameText;
@@ -127,7 +129,7 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
 
         ViewHolder(View itemView) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.componentName);
+            nameText = itemView.findViewById(R.id.mealName);
             amountText = itemView.findViewById(R.id.componentQuantity);
             itemView.setOnClickListener(this);
         }
@@ -140,8 +142,6 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
 
     // convenience method for getting data at click position
     public ItemPass getItem(int id) {
-        Log.i("Tester", String.valueOf(id));
-        Log.i("Testers", String.valueOf(ItemStorage.getInstance().components.keyAt(id)));
         return ItemStorage.getInstance().components.valueAt(id);
     }
 

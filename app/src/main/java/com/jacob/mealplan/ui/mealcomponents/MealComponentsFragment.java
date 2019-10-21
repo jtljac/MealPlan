@@ -27,31 +27,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class MealComponentsFragment extends Fragment implements MealComponentRecyclerViewAdapter.ItemClickListener{
-
     private MealComponentsViewModel mealComponentsViewModel;
     MealComponentRecyclerViewAdapter adapter;
-    MealComponentsFragment thisFragment = this;
-
-
-    public static String convertStreamToString(InputStream is) throws IOException {
-        // http://www.java2s.com/Code/Java/File-Input-Output/ConvertInputStreamtoString.htm
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line = null;
-        Boolean firstLine = true;
-        while ((line = reader.readLine()) != null) {
-            if(firstLine){
-                sb.append(line);
-                firstLine = false;
-            } else {
-                sb.append("\n").append(line);
-            }
-        }
-        reader.close();
-        return sb.toString();
-    }
+    private MealComponentsFragment thisFragment = this;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Do view model stuff
         mealComponentsViewModel =
                 ViewModelProviders.of(this).get(MealComponentsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_meal_components, container, false);
@@ -61,6 +42,7 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
             }
         });
 
+        // Setup the action button
         FloatingActionButton fab = root.findViewById(R.id.fabAddComponent);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +52,7 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
             }
         });
 
+        // Tell the user if no components exist
         if (ItemStorage.getInstance().components.size() < 1) {
             Toast.makeText(getContext(), R.string.noComponents, Toast.LENGTH_LONG)
                     .show();
@@ -82,8 +65,10 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
+        // Add lines in between each row
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
+        // Add the touch helper to enable swiping
         ItemTouchHelper itemTouchHelper = new
                 ItemTouchHelper(new SwipeToDeleteEditCallback(adapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
@@ -91,16 +76,25 @@ public class MealComponentsFragment extends Fragment implements MealComponentRec
     }
 
     public void editComponent(int position){
+        /*
+         * Callback for creating component modifying dialog
+         */
         DialogFragment mealMaker = new MakeMealComponentDialogFragment(adapter.getItem(position), position, this);
         mealMaker.show(getFragmentManager(), "TAG");
     }
 
     public void updateComponents(){
+        /*
+         * Tell the RecyclerView adapter to update its contents
+         */
         adapter.updateItems();
     }
 
     @Override
     public void onItemClick(View view, int position) {
+        /*
+         * Callback for clicking on an item
+         */
         Toast.makeText(getContext(), "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
 }

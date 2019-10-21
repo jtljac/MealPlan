@@ -48,13 +48,16 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_newmeal, null);
+        final View dialogView = inflater.inflate(R.layout.dialog_newComponent, null);
+
+        // Inputs
         textName = dialogView.findViewById(R.id.TextMealComponentName);
         switchQuantifiable = dialogView.findViewById(R.id.SwitchQuantifiable);
         intAmount = dialogView.findViewById(R.id.PickerAmount);
         intAmount.setMaxValue(1000);
         intAmount.setMinValue(0);
 
+        // Setup values if we've been passed an existing component
         if(components != null){
             try {
                 textName.setText(components.json.getString("Name"));
@@ -65,34 +68,41 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
             }
         }
 
+        // Change the ability to use the number scroller if the quantifiable switch changes
         dialogView.findViewById(R.id.SwitchQuantifiable).setOnClickListener(new Switch.OnClickListener() {
             @Override
             public void onClick(View view) {
                 intAmount.setEnabled(((Switch) view).isChecked());
             }
         });
+
         builder.setView(dialogView)
                 .setPositiveButton(((components != null) ? R.string.set : R.string.add), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        // Get Values
                         String name = (textName.getText().toString());
                         boolean quantifiable = switchQuantifiable.isChecked();
                         int amount = intAmount.getValue();
+                        // Put the values into a json object
                         JSONObject jsonObject = new JSONObject();
                         try {
                             jsonObject.put("Name", name);
                             jsonObject.put("Quantifiable", quantifiable);
                             jsonObject.put("Amount", amount);
 
+                            // Modify the component if we were passed one, otherwise create a new one
                             if(components != null){
                                 ItemStorage.getInstance().modifyComponentByPosition(new ItemPass(components.file, jsonObject), position);
                             } else {
                                 ItemStorage.getInstance().addNewComponent(jsonObject, getContext());
                             }
+
+                            // Tell the fragment to update the list
                             fragment.updateComponents();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT);
+                            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
