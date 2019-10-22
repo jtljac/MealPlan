@@ -129,7 +129,7 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
 
         ViewHolder(View itemView) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.mealName);
+            nameText = itemView.findViewById(R.id.componentName);
             amountText = itemView.findViewById(R.id.componentQuantity);
             itemView.setOnClickListener(this);
         }

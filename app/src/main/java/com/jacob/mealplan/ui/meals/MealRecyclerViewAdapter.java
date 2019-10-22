@@ -69,7 +69,7 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
 
         ViewHolder(View itemView) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.mealName);
+            nameText = itemView.findViewById(R.id.componentName);
             card = itemView.findViewById(R.id.theCard);
             itemView.setOnClickListener(this);
         }

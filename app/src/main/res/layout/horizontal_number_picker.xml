@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/numberPicker"
+    android:layout_width="200sp"
+    android:layout_height="match_parent"
+    android:layout_gravity="end"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    tools:showIn="@layout/makemealcomponentrecyclerview_row">
+
+    <ImageButton
+        android:id="@+id/minusButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_remove" />
+
+    <EditText
+        android:id="@+id/numberValue"
+        android:layout_width="45sp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:inputType="number"
+        android:minWidth="30sp"
+        android:textSize="30sp"
+        tools:text="0"
+        android:importantForAutofill="no" />
+
+    <ImageButton
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_add" />
+
+</LinearLayout>
