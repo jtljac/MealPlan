@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jacob.mealplan.HorizontalNumberPicker;
 import com.jacob.mealplan.ItemPass;
@@ -14,52 +15,50 @@ import com.jacob.mealplan.R;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapter<MakeMealUsedComponentRecyclerViewAdapter.ViewHolder> {
+public class MakeMealStepRecyclerViewAdapter extends RecyclerView.Adapter<MakeMealStepRecyclerViewAdapter.ViewHolder> {
     private Context context;
     private LayoutInflater mInflater;
     private ArrayList<ViewHolder> viewHolders;
-    private JSONObject components;
+    private int amount;
+    private JSONArray steps;
 
     // data is passed into the constructor
-    public MakeMealUsedComponentRecyclerViewAdapter(Context context) {
+    public MakeMealStepRecyclerViewAdapter(Context context) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         viewHolders = new ArrayList<>();
+        amount = 1;
     }
 
     // data is passed into the constructor
-    public MakeMealUsedComponentRecyclerViewAdapter(Context context, JSONObject theComponents) {
+    public MakeMealStepRecyclerViewAdapter(Context context, JSONArray theSteps) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         viewHolders = new ArrayList<>();
-        components = theComponents;
+        amount = 1;
+        steps = theSteps;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.make_meal_component_recyclerview_row, parent, false);
-
-        return new MakeMealUsedComponentRecyclerViewAdapter.ViewHolder(view);
+        View view = mInflater.inflate(R.layout.meal_step_recyclerview_row, parent, false);
+        return new MakeMealStepRecyclerViewAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MakeMealUsedComponentRecyclerViewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MakeMealStepRecyclerViewAdapter.ViewHolder holder, int position) {
         String item;
         try {
             item = ItemStorage.getInstance().components.valueAt(position).json.getString("Name");
-
             viewHolders.add(holder);
-            holder.picker.setMin(0);
-            holder.name.setText(item);
-            if(components != null && components.has(item)) {
-                holder.picker.setValue(components.getInt(item));
-            }
+            holder.name.setText(context.getString(R.string.stepFormatted, (position + 1)));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -67,30 +66,34 @@ public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapt
 
     @Override
     public int getItemCount() {
-        return ItemStorage.getInstance().components.size();
+        return amount;
     }
 
-    // convenience method for getting data at click position
-    public ItemPass getItem(int id) {
-        return ItemStorage.getInstance().components.valueAt(id);
+    public void addDescriptor(){
+        amount++;
+        notifyItemInserted(amount-1);
+    }
+
+    public void removeDescriptor(){
+        if(amount > 1) {
+            amount--;
+            notifyItemRemoved(amount);
+        } else {
+            Toast.makeText(context, R.string.tooFewSteps, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public ViewHolder getViewHolder(int id){
         return viewHolders.get(id);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder {
         TextView name;
-        HorizontalNumberPicker picker;
+        TextView step;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.componentName);
-            picker = itemView.findViewById(R.id.quantitySelector);
-        }
-
-        @Override
-        public void onClick(View view) {
-
+            name = itemView.findViewById(R.id.titleText);
+            step = itemView.findViewById(R.id.stepText);
         }
     }
 }

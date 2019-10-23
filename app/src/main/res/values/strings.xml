@@ -24,4 +24,9 @@
     <string name="description">Description</string>
     <string name="menu_make_meal_components">Components</string>
     <string name="steps">Steps</string>
+    <string name="step">Step</string>
+    <string name="stepFormatted">Step %1$d</string>
+    <string name="remove_step">Remove Step</string>
+    <string name="add_step">Add Step</string>
+    <string name="tooFewSteps">You must have atleast 1 step</string>
 </resources>
