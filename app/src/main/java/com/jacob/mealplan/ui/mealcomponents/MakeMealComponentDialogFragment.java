@@ -49,7 +49,7 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_newcomponent, null);
+        final View dialogView = inflater.inflate(R.layout.dialog_new_component, null);
 
         // Inputs
         textName = dialogView.findViewById(R.id.textMealName);

@@ -16,8 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jacob.mealplan.ItemPass;
 import com.jacob.mealplan.R;
-import com.jacob.mealplan.ui.mealcomponents.MealComponentRecyclerViewAdapter;
-import com.jacob.mealplan.ui.mealcomponents.MealComponentsFragment;
 
 import org.json.JSONException;
 
@@ -46,7 +44,7 @@ public class MakeMealDialogFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_newmeal, null);
+        final View dialogView = inflater.inflate(R.layout.dialog_new_meal, null);
 
         // set up the RecyclerView
         RecyclerView recyclerView = dialogView.findViewById(R.id.componentsUsedRecyclerView);

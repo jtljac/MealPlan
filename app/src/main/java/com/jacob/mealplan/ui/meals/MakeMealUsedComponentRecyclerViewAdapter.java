@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.jacob.mealplan.HorizontalNumberPicker;
@@ -13,7 +12,6 @@ import com.jacob.mealplan.ItemStorage;
 import com.jacob.mealplan.R;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
@@ -45,14 +43,14 @@ public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapt
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.makemealcomponentrecyclerview_row, parent, false);
+        View view = mInflater.inflate(R.layout.make_meal_component_recyclerview_row, parent, false);
 
         return new MakeMealUsedComponentRecyclerViewAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MakeMealUsedComponentRecyclerViewAdapter.ViewHolder holder, int position) {
-        String item = null;
+        String item;
         try {
             item = ItemStorage.getInstance().components.valueAt(position).json.getString("Name");
 
@@ -83,7 +81,7 @@ public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapt
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView name;
         HorizontalNumberPicker picker;
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.componentName);
             picker = itemView.findViewById(R.id.quantitySelector);
