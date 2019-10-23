@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapt
     private Context context;
     private LayoutInflater mInflater;
     private ArrayList<ViewHolder> viewHolders;
-    private MealRecyclerViewAdapter.ItemClickListener mClickListener;
+    private JSONObject components;
 
     // data is passed into the constructor
     public MakeMealUsedComponentRecyclerViewAdapter(Context context) {
@@ -33,10 +34,19 @@ public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapt
         viewHolders = new ArrayList<>();
     }
 
+    // data is passed into the constructor
+    public MakeMealUsedComponentRecyclerViewAdapter(Context context, JSONObject theComponents) {
+        this.context = context;
+        this.mInflater = LayoutInflater.from(context);
+        viewHolders = new ArrayList<>();
+        components = theComponents;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.makemealcomponentrecyclerview_row, parent, false);
+
         return new MakeMealUsedComponentRecyclerViewAdapter.ViewHolder(view);
     }
 
@@ -45,11 +55,15 @@ public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapt
         String item = null;
         try {
             item = ItemStorage.getInstance().components.valueAt(position).json.getString("Name");
+
+            viewHolders.add(holder);
+            holder.name.setText(item);
+            if(components != null && components.has(item)) {
+                holder.picker.setValue(components.getInt(item));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        holder.name.setText(item);
-        viewHolders.add(holder);
     }
 
     @Override
@@ -72,23 +86,12 @@ public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapt
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.componentName);
-            picker = itemView.findViewById(R.id.quantityPicker);
+            picker = itemView.findViewById(R.id.quantitySelector);
         }
 
         @Override
         public void onClick(View view) {
 
         }
-    }
-
-    // parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
-
-    }
-
-    // allows clicks events to be caught
-    public void setClickListener(MealRecyclerViewAdapter.ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
     }
 }

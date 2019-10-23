@@ -45,7 +45,7 @@ public class HorizontalNumberPicker extends LinearLayout {
         inflate(context, R.layout.horizontal_number_picker, this);
 
         number = findViewById(R.id.numberValue);
-        number.setText(value);
+        number.setText(String.valueOf(value));
         number.addTextChangedListener(new changeHandler());
 
         final ImageButton minus = findViewById(R.id.minusButton);

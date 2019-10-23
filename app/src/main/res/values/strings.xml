@@ -22,4 +22,6 @@
     <string name="snack_bar_undo">Undo</string>
     <string name="snack_bar_text">Did you mean to delete that?</string>
     <string name="description">Description</string>
+    <string name="menu_make_meal_components">Components</string>
+    <string name="steps">Steps</string>
 </resources>

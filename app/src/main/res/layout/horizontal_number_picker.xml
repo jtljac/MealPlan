@@ -2,17 +2,13 @@
 <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:id="@+id/numberPicker"
     android:layout_width="200sp"
     android:layout_height="match_parent"
     android:layout_gravity="end"
     android:baselineAligned="false"
     android:orientation="horizontal"
-    tools:showIn="@layout/makemealcomponentrecyclerview_row"
-    custom:button_size="10sp"
-    custom:text_size="10sp"
-    >
+    tools:showIn="@layout/makemealcomponentrecyclerview_row">
 
     <ImageButton
         android:id="@+id/minusButton"
