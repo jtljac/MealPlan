@@ -23,8 +23,16 @@
             android:textSize="30sp"
             tools:text="Test" />
 
-    </LinearLayout>
+        <com.jacob.mealplan.HorizontalNumberPicker
+            android:id="@+id/quantityPicker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:gravity="end"
+            app:button_size="20sp"
+            app:text_colour="#00000000"
+            app:text_size="20sp" />
 
-    <include layout="@layout/horizontal_number_picker" />
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

@@ -47,7 +47,7 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.componentrecyclerview_row, parent, false);
+        View view = mInflater.inflate(R.layout.component_recyclerview_row, parent, false);
         return new ViewHolder(view);
     }
 

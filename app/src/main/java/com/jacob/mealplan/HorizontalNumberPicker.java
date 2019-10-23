@@ -1,9 +1,12 @@
 package com.jacob.mealplan;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,11 +22,30 @@ public class HorizontalNumberPicker extends LinearLayout {
     private int step = 1;
     private boolean wrap = true;
 
+    private static String STATE_SELECTED_NUMBER = "SelectedNumber";
+
+    private static String STATE_SUPER_CLASS = "SuperClass";
+
     public HorizontalNumberPicker(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        setup(context);
+    }
+
+    public HorizontalNumberPicker(Context context){
+        super(context);
+        setup(context);
+    }
+
+    public HorizontalNumberPicker(Context context, @Nullable AttributeSet attrs, int defStyle){
+        super(context, attrs, defStyle);
+        setup(context);
+    }
+
+    private void setup(Context context){
         inflate(context, R.layout.horizontal_number_picker, this);
 
         number = findViewById(R.id.numberValue);
+        number.setText(value);
         number.addTextChangedListener(new changeHandler());
 
         final ImageButton minus = findViewById(R.id.minusButton);
@@ -86,15 +108,7 @@ public class HorizontalNumberPicker extends LinearLayout {
         @Override
         public void afterTextChanged(Editable editable) {
             int tempValue = Integer.valueOf(editable.toString());
-            if(max != null && tempValue > max){
-                value = max;
-                updateText();
-            } else if (min != null && tempValue < min){
-                value = min;
-                updateText();
-            } else {
-                value = tempValue;
-            }
+            if(tempValue != value) setValue(tempValue);
         }
     }
 
@@ -102,8 +116,14 @@ public class HorizontalNumberPicker extends LinearLayout {
         return value;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setValue(int tempValue) {
+        if(max != null && tempValue > max){
+            value = max;
+        } else if (min != null && tempValue < min){
+            value = min;
+        } else {
+            value = tempValue;
+        }
         updateText();
     }
 
@@ -137,5 +157,45 @@ public class HorizontalNumberPicker extends LinearLayout {
 
     public void setWrap(boolean wrap) {
         this.wrap = wrap;
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+
+        bundle.putParcelable(STATE_SUPER_CLASS,
+                super.onSaveInstanceState());
+        bundle.putInt(STATE_SELECTED_NUMBER, value);
+
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle)state;
+
+            super.onRestoreInstanceState(bundle
+                    .getParcelable(STATE_SUPER_CLASS));
+            setValue(bundle.getInt(STATE_SELECTED_NUMBER));
+        }
+        else
+            super.onRestoreInstanceState(state);
+    }
+
+    @Override
+    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
+        // Makes sure that the state of the child views in the side
+        // spinner are not saved since we handle the state in the
+        // onSaveInstanceState.
+        super.dispatchFreezeSelfOnly(container);
+    }
+
+    @Override
+    protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
+        // Makes sure that the state of the child views in the side
+        // spinner are not restored since we handle the state in the
+        // onSaveInstanceState.
+        super.dispatchThawSelfOnly(container);
     }
 }

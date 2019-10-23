@@ -39,7 +39,7 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
         Log.i("TAGTEST", theComponents.json.toString());
     }
 
-    MakeMealComponentDialogFragment(MealComponentRecyclerViewAdapter theRecycler, MealComponentsFragment theFragment){
+    public MakeMealComponentDialogFragment(MealComponentRecyclerViewAdapter theRecycler, MealComponentsFragment theFragment){
         recycler = theRecycler;
         fragment = theFragment;
     }
@@ -52,7 +52,7 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
         final View dialogView = inflater.inflate(R.layout.dialog_newcomponent, null);
 
         // Inputs
-        textName = dialogView.findViewById(R.id.TextMealDescription);
+        textName = dialogView.findViewById(R.id.textMealName);
         switchQuantifiable = dialogView.findViewById(R.id.SwitchQuantifiable);
         intAmount = dialogView.findViewById(R.id.PickerAmount);
         intAmount.setMaxValue(1000);

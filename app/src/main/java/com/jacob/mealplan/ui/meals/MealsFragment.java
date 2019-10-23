@@ -9,16 +9,20 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jacob.mealplan.ItemStorage;
 import com.jacob.mealplan.R;
+import com.jacob.mealplan.ui.mealcomponents.MakeMealComponentDialogFragment;
 import com.jacob.mealplan.ui.mealcomponents.MealComponentRecyclerViewAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 
 public class MealsFragment extends Fragment implements MealRecyclerViewAdapter.ItemClickListener{
 
@@ -40,8 +44,8 @@ public class MealsFragment extends Fragment implements MealRecyclerViewAdapter.I
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // DialogFragment mealMaker = new MakeMealComponentDialogFragment(adapter, thisFragment);
-                // mealMaker.show(getFragmentManager(), "TAG");
+                DialogFragment mealMaker = new MakeMealDialogFragment(adapter, thisFragment);
+                mealMaker.show(getFragmentManager(), "TAG");
             }
         });
 

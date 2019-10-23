@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="HorizontalNumberPicker">
+        <attr name="button_size" format="dimension" />
+        <attr name="text_size" format="dimension" />
+        <attr name="button_colour" format="color" />
+        <attr name="text_colour" format="color" />
+        <attr name="minus_image" format="reference" />
+        <attr name="add_image" format="reference" />
+    </declare-styleable>
+</resources>
