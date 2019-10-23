@@ -65,6 +65,7 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
         }
         holder.nameText.setText(item);
         if (quantifiable) holder.amountText.setText(amount);
+        else holder.amountText.setText("");
     }
 
     // total number of rows

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jacob.mealplan.HorizontalNumberPicker;
@@ -57,6 +59,7 @@ public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapt
             viewHolders.add(holder);
             holder.picker.setMin(0);
             holder.name.setText(item);
+            if(!ItemStorage.getInstance().components.valueAt(position).json.getBoolean("Quantifiable")) holder.useCheckBox(true);
             if(components != null && components.has(item)) {
                 holder.picker.setValue(components.getInt(item));
             }
@@ -82,10 +85,24 @@ public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapt
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView name;
         HorizontalNumberPicker picker;
+        CheckBox checkBox;
+        LinearLayout checkBoxHolder;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.componentName);
             picker = itemView.findViewById(R.id.quantitySelector);
+            checkBox = itemView.findViewById(R.id.usedCheckBox);
+            checkBoxHolder = itemView.findViewById(R.id.checkBoxHolder);
+        }
+
+        public void useCheckBox(boolean checkBox){
+            if (checkBox) {
+                picker.setVisibility(View.GONE);
+                checkBoxHolder.setVisibility(View.VISIBLE);
+            } else {
+                picker.setVisibility(View.VISIBLE);
+                checkBoxHolder.setVisibility(View.GONE);
+            }
         }
 
         @Override

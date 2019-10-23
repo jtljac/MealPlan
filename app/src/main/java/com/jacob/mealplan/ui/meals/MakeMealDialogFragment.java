@@ -97,14 +97,19 @@ public class MakeMealDialogFragment extends DialogFragment {
 
                             json    .put("Name", name)
                                     .put("Description", description);
+
                             MakeMealUsedComponentRecyclerViewAdapter.ViewHolder componentAmount;
                             for (int i = 0; i < componentAdapter.getItemCount() - 1; i++) {
                                 componentAmount = componentAdapter.getViewHolder(i);
                                 if(componentAmount.picker.getValue() > 0){
-                                    jsonComponents.put(ItemStorage.getInstance().components.valueAt(i).json.getString("ID"), componentAmount.picker.getValue());
+                                    jsonComponents.put(String.valueOf(ItemStorage.getInstance().components.valueAt(i).json.getInt("ID")), componentAmount.picker.getValue());
+                                } else if(componentAmount.checkBox.isChecked()){
+                                    jsonComponents.put(String.valueOf(ItemStorage.getInstance().components.valueAt(i).json.getInt("ID")), true);
                                 }
                             }
                             Log.i("JSON", jsonComponents.toString());
+
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

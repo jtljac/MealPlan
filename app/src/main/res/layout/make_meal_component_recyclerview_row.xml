@@ -17,7 +17,7 @@
 
         <TextView
             android:id="@+id/componentName"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10sp"
             android:layout_weight="1"
@@ -31,7 +31,32 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:gravity="end" />
+            android:gravity="end"
+            android:visibility="visible">
+
+        </com.jacob.mealplan.HorizontalNumberPicker>
+
+        <LinearLayout
+            android:id="@+id/checkBoxHolder"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <CheckBox
+                android:id="@+id/usedCheckBox"
+                style="@android:style/Widget.CompoundButton.CheckBox"
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10sp"
+                android:layout_weight="1"
+                android:background="?attr/listChoiceBackgroundIndicator"
+                android:gravity="end"
+                android:textAlignment="textEnd"
+                android:textSize="0sp"
+                android:visibility="visible" />
+        </LinearLayout>
 
     </LinearLayout>
 
