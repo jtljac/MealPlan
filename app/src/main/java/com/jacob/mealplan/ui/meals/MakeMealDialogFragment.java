@@ -23,6 +23,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 public class MakeMealDialogFragment extends DialogFragment {
     private ItemPass components;
     private MealRecyclerViewAdapter recycler;
@@ -80,6 +82,22 @@ public class MakeMealDialogFragment extends DialogFragment {
         if(components != null){
             try {
                 textName.setText(components.json.getString("Name"));
+                textDescription.setText(components.json.getString("Description"));
+                // Components
+                for(int i = 0; i < componentAdapter.getItemCount(); i++){
+                    if(components.json.getJSONObject("Components").has(String.valueOf(ItemStorage.getInstance().components.get(i).json.getInt("ID")))){
+                        if(ItemStorage.getInstance().components.get(i).json.getBoolean("Quantifiable")){
+                            componentAdapter.getViewHolder(i).picker.setValue(components.json.getJSONObject("Components").getInt(String.valueOf(ItemStorage.getInstance().components.get(i).json.getInt("ID"))));
+                        } else {
+                            componentAdapter.getViewHolder(i).checkBox.setChecked(components.json.getJSONObject("Components").getInt(String.valueOf(ItemStorage.getInstance().components.get(i).json.getBoolean("ID")));
+                        }
+                    }
+                }
+                // Steps
+
+                for(int i = 0; i < components.json.getJSONArray("Steps").length(); i++){
+                    stepAdapter.addDescriptor(components.json.getJSONArray("Steps").getString(i));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -99,7 +117,7 @@ public class MakeMealDialogFragment extends DialogFragment {
                                     .put("Description", description);
 
                             MakeMealUsedComponentRecyclerViewAdapter.ViewHolder componentAmount;
-                            for (int i = 0; i < componentAdapter.getItemCount() - 1; i++) {
+                            for (int i = 0; i < componentAdapter.getItemCount(); i++) {
                                 componentAmount = componentAdapter.getViewHolder(i);
                                 if(componentAmount.picker.getValue() > 0){
                                     jsonComponents.put(String.valueOf(ItemStorage.getInstance().components.valueAt(i).json.getInt("ID")), componentAmount.picker.getValue());
@@ -109,8 +127,23 @@ public class MakeMealDialogFragment extends DialogFragment {
                             }
                             Log.i("JSON", jsonComponents.toString());
 
+                            for (int i = 0; i < stepAdapter.getItemCount(); i++) {
+                                jsonSteps.put(stepAdapter.getViewHolder(i).step.getText().toString());
+                            }
 
-                        } catch (JSONException e) {
+                            Log.i("JSON", jsonSteps.toString());
+
+                            json.put("Components", jsonComponents);
+                            json.put("Steps", jsonComponents);
+
+                            // Modify the component if we were passed one, otherwise create a new one
+                            if(components != null){
+                                ItemStorage.getInstance().modifyMealByPosition(new ItemPass(components.file, json), position);
+                            } else {
+                                ItemStorage.getInstance().addNewMeal(json, getContext());
+                            }
+
+                        } catch (JSONException | IOException e) {
                             e.printStackTrace();
                         }
 

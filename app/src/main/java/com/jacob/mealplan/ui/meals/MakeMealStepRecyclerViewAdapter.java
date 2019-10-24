@@ -54,14 +54,8 @@ public class MakeMealStepRecyclerViewAdapter extends RecyclerView.Adapter<MakeMe
 
     @Override
     public void onBindViewHolder(@NonNull MakeMealStepRecyclerViewAdapter.ViewHolder holder, int position) {
-        String item;
-        try {
-            item = ItemStorage.getInstance().components.valueAt(position).json.getString("Name");
-            viewHolders.add(holder);
-            holder.name.setText(context.getString(R.string.stepFormatted, (position + 1)));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        viewHolders.add(holder);
+        holder.name.setText(context.getString(R.string.stepFormatted, (position + 1)));
     }
 
     @Override
@@ -72,6 +66,12 @@ public class MakeMealStepRecyclerViewAdapter extends RecyclerView.Adapter<MakeMe
     public void addDescriptor(){
         amount++;
         notifyItemInserted(amount-1);
+    }
+
+    public void addDescriptor(String text){
+        amount++;
+        notifyItemInserted(amount-1);
+        getViewHolder(amount-1).step.setText(text);
     }
 
     public void removeDescriptor(){
