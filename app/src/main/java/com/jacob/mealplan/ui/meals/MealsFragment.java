@@ -6,12 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.jacob.mealplan.ItemStorage;
-import com.jacob.mealplan.R;
-import com.jacob.mealplan.ui.mealcomponents.MakeMealComponentDialogFragment;
-import com.jacob.mealplan.ui.mealcomponents.MealComponentRecyclerViewAdapter;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -22,7 +16,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jacob.mealplan.ItemStorage;
+import com.jacob.mealplan.R;
 
 public class MealsFragment extends Fragment implements MealRecyclerViewAdapter.ItemClickListener{
 
@@ -39,6 +35,7 @@ public class MealsFragment extends Fragment implements MealRecyclerViewAdapter.I
             public void onChanged(@Nullable String s) {
             }
         });
+
 
         FloatingActionButton fab = root.findViewById(R.id.fabAddMeal);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +62,13 @@ public class MealsFragment extends Fragment implements MealRecyclerViewAdapter.I
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         return root;
+    }
+
+    public void updateComponents(){
+        /*
+         * Tell the RecyclerView adapter to update its contents
+         */
+        adapter.updateItems();
     }
 
     @Override

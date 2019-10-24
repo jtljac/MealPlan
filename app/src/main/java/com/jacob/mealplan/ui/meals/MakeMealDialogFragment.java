@@ -89,7 +89,7 @@ public class MakeMealDialogFragment extends DialogFragment {
                         if(ItemStorage.getInstance().components.get(i).json.getBoolean("Quantifiable")){
                             componentAdapter.getViewHolder(i).picker.setValue(components.json.getJSONObject("Components").getInt(String.valueOf(ItemStorage.getInstance().components.get(i).json.getInt("ID"))));
                         } else {
-                            componentAdapter.getViewHolder(i).checkBox.setChecked(components.json.getJSONObject("Components").getInt(String.valueOf(ItemStorage.getInstance().components.get(i).json.getBoolean("ID")));
+                            componentAdapter.getViewHolder(i).checkBox.setChecked(components.json.getJSONObject("Components").getBoolean(String.valueOf(ItemStorage.getInstance().components.get(i).json.getBoolean("ID"))));
                         }
                     }
                 }
@@ -134,7 +134,7 @@ public class MakeMealDialogFragment extends DialogFragment {
                             Log.i("JSON", jsonSteps.toString());
 
                             json.put("Components", jsonComponents);
-                            json.put("Steps", jsonComponents);
+                            json.put("Steps", jsonSteps);
 
                             // Modify the component if we were passed one, otherwise create a new one
                             if(components != null){
@@ -142,7 +142,9 @@ public class MakeMealDialogFragment extends DialogFragment {
                             } else {
                                 ItemStorage.getInstance().addNewMeal(json, getContext());
                             }
+                            Log.i("JSON", json.toString());
 
+                            fragment.updateComponents();
                         } catch (JSONException | IOException e) {
                             e.printStackTrace();
                         }

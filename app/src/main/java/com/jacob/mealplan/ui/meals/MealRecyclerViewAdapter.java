@@ -12,6 +12,7 @@ import com.jacob.mealplan.ItemStorage;
 import com.jacob.mealplan.R;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,15 +45,18 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String item = null;
+        JSONObject item = null;
         try {
-            item = ItemStorage.getInstance().meals.valueAt(position).json.getString("Name");
-
+            item = ItemStorage.getInstance().meals.valueAt(position).json;
+            holder.nameText.setText(item.getString("Name"));
             //TODO: Logic for if quantities aren't great enough
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        holder.nameText.setText(item);
+    }
+
+    public void updateItems() {
+        this.notifyDataSetChanged();
     }
 
     @Override
