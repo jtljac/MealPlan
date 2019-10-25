@@ -1,5 +1,6 @@
 package com.jacob.mealplan.ui.meals;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jacob.mealplan.ItemStorage;
 import com.jacob.mealplan.R;
+import com.jacob.mealplan.meal.MealViewActivity;
 
 public class MealsFragment extends Fragment implements MealRecyclerViewAdapter.ItemClickListener{
 
@@ -73,7 +75,9 @@ public class MealsFragment extends Fragment implements MealRecyclerViewAdapter.I
 
     @Override
     public void onItemClick(View view, int position) {
-
+        Intent intent = new Intent(getContext(), MealViewActivity.class);
+        intent.putExtra("Position", position);
+        startActivity(intent);
     }
 }
 

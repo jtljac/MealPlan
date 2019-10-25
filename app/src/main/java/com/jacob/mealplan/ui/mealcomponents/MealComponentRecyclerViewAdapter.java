@@ -33,14 +33,14 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
     private ItemPass mRecentlyDeletedItem;
     private int mRecentlyDeletedItemKey;
 
-    public MealComponentRecyclerViewAdapter(Context context, Activity activity, MealComponentsFragment theFragment) {
+    MealComponentRecyclerViewAdapter(Context context, Activity activity, MealComponentsFragment theFragment) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mActivity = activity;
         fragment = theFragment;
     }
 
-    public Context getContext() {
+    Context getContext() {
         return context;
     }
 
