@@ -7,46 +7,42 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.jacob.mealplan.ItemStorage;
 import com.jacob.mealplan.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MealComponentsRecyclerViewAdapter extends RecyclerView.Adapter<MealComponentsRecyclerViewAdapter.ViewHolder> {
-    JSONObject items;
-    ArrayList<String> keys = new ArrayList<>();
-    private LayoutInflater mInflater;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
-    public MealComponentsRecyclerViewAdapter(Context context, JSONObject theItems){
-        items = theItems;
+public class MealStepsRecyclerViewAdapter extends RecyclerView.Adapter<MealStepsRecyclerViewAdapter.ViewHolder> {
+    JSONArray items;
+    private LayoutInflater mInflater;
+    private Context context;
+
+    public MealStepsRecyclerViewAdapter(Context theContext, JSONArray theItems){
         Log.i("Test", theItems.toString());
+        context = theContext;
         mInflater = LayoutInflater.from(context);
-        items.keys().forEachRemaining(keys::add);
+        items = theItems;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.component_recyclerview_row, parent, false);
+        View view = mInflater.inflate(R.layout.meal_view_step_recyclerview_row, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String item = null;
-        String key = keys.get(position);
         try {
-            Log.i("Test", key);
-            item = ItemStorage.getInstance().components.get(Integer.valueOf(key)).json.getString("Name");
-            holder.nameText.setText(item);
-
-            if (!items.optBoolean(key, false)) holder.amountText.setText(String.valueOf(items.getInt(key)));
+            holder.stepText.setText(context.getString(R.string.stepFormatted, (position + 1)));
+            holder.descriptionText.setText(items.getString(position));
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -61,13 +57,13 @@ public class MealComponentsRecyclerViewAdapter extends RecyclerView.Adapter<Meal
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nameText;
-        TextView amountText;
+        TextView stepText;
+        TextView descriptionText;
 
         ViewHolder(View itemView) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.componentName);
-            amountText = itemView.findViewById(R.id.componentQuantity);
+            stepText = itemView.findViewById(R.id.titleText);
+            descriptionText = itemView.findViewById(R.id.descriptionText);
         }
     }
 }

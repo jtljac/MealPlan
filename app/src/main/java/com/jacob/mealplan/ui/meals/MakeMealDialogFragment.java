@@ -94,7 +94,6 @@ public class MakeMealDialogFragment extends DialogFragment {
                     }
                 }
                 // Steps
-
                 for(int i = 0; i < components.json.getJSONArray("Steps").length(); i++){
                     stepAdapter.addDescriptor(components.json.getJSONArray("Steps").getString(i));
                 }
