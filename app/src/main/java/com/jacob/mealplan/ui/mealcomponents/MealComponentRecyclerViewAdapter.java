@@ -55,16 +55,18 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
     public void onBindViewHolder(ViewHolder holder, int position) {
         String item = null;
         String amount = null;
+        String units = null;
         boolean quantifiable = false;
         try {
             item = ItemStorage.getInstance().components.valueAt(position).json.getString("Name");
             amount = ItemStorage.getInstance().components.valueAt(position).json.getString("Amount");
+            units = ItemStorage.getInstance().components.valueAt(position).json.optString("Units", "");
             quantifiable = ItemStorage.getInstance().components.valueAt(position).json.getBoolean("Quantifiable");
         } catch (JSONException e) {
             e.printStackTrace();
         }
         holder.nameText.setText(item);
-        if (quantifiable) holder.amountText.setText(amount);
+        if (quantifiable) holder.amountText.setText(context.getString(R.string.unitsDisplay, amount, units));
         else holder.amountText.setText("");
     }
 

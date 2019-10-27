@@ -21,6 +21,7 @@ public class HorizontalNumberPicker extends LinearLayout {
     private Integer max, min;
     private int step = 1;
     private boolean wrap = true;
+    private String suffix = "";
 
     private static String STATE_SELECTED_NUMBER = "SelectedNumber";
 
@@ -56,7 +57,7 @@ public class HorizontalNumberPicker extends LinearLayout {
     }
 
     private void updateText(){
-        number.setText(String.valueOf(value));
+        number.setText(String.valueOf(value) + suffix);
     }
 
     private class AddHandler implements OnClickListener {
@@ -107,8 +108,8 @@ public class HorizontalNumberPicker extends LinearLayout {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            int tempValue = Integer.valueOf(editable.toString());
-            if(tempValue != value) setValue(tempValue);
+            String tempValue = editable.toString();
+            if(!tempValue.equals(value + suffix)) setValue(Integer.valueOf(tempValue));
         }
     }
 
@@ -157,6 +158,15 @@ public class HorizontalNumberPicker extends LinearLayout {
 
     public void setWrap(boolean wrap) {
         this.wrap = wrap;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+        updateText();
     }
 
     @Override

@@ -58,6 +58,7 @@ public class MakeMealUsedComponentRecyclerViewAdapter extends RecyclerView.Adapt
 
             viewHolders.add(holder);
             holder.picker.setMin(0);
+            holder.picker.setSuffix(ItemStorage.getInstance().components.valueAt(position).json.optString("Units", ""));
             holder.name.setText(item);
             if(!ItemStorage.getInstance().components.valueAt(position).json.getBoolean("Quantifiable")) holder.useCheckBox(true);
             if(components != null && components.has(item)) {

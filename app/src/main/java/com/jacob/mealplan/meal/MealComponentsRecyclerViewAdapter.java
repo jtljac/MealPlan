@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.jacob.mealplan.ItemPass;
 import com.jacob.mealplan.ItemStorage;
 import com.jacob.mealplan.R;
 
@@ -22,10 +23,12 @@ public class MealComponentsRecyclerViewAdapter extends RecyclerView.Adapter<Meal
     JSONObject items;
     ArrayList<String> keys = new ArrayList<>();
     private LayoutInflater mInflater;
+    private Context context;
 
-    public MealComponentsRecyclerViewAdapter(Context context, JSONObject theItems){
+    public MealComponentsRecyclerViewAdapter(Context theContext, JSONObject theItems){
         items = theItems;
         Log.i("Test", theItems.toString());
+        context = theContext;
         mInflater = LayoutInflater.from(context);
         items.keys().forEachRemaining(keys::add);
     }
@@ -39,19 +42,22 @@ public class MealComponentsRecyclerViewAdapter extends RecyclerView.Adapter<Meal
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String item = null;
         String key = keys.get(position);
-        try {
-            Log.i("Test", key);
-            item = ItemStorage.getInstance().components.get(Integer.valueOf(key)).json.getString("Name");
-            holder.nameText.setText(item);
+        ItemPass item = ItemStorage.getInstance().components.get(Integer.valueOf(key));
 
-            if (!items.optBoolean(key, false)) holder.amountText.setText(String.valueOf(items.getInt(key)));
+        if(item != null) {
+            try {
+                holder.nameText.setText(item.json.getString("Name"));
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+                if (!items.optBoolean(key, false))
+                    holder.amountText.setText(context.getString(R.string.unitsDisplay, String.valueOf(items.getInt(key)), item.json.optString("Units", "")));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            holder.nameText.setText(context.getString(R.string.itemDeleted));
         }
-
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
@@ -28,9 +29,12 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
     private MealComponentRecyclerViewAdapter recycler;
     private int position;
     public MealComponentsFragment fragment;
+
     private EditText textName;
     private Switch switchQuantifiable;
     private NumberPicker intAmount;
+    private TextView textUnits;
+    private View amountHolder;
 
     MakeMealComponentDialogFragment(ItemPass theComponents, int thePosition, MealComponentsFragment theFragment){
         components = theComponents;
@@ -54,8 +58,10 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
         // Inputs
         textName = dialogView.findViewById(R.id.textMealName);
         switchQuantifiable = dialogView.findViewById(R.id.SwitchQuantifiable);
+        textUnits = dialogView.findViewById(R.id.units);
+        amountHolder = dialogView.findViewById(R.id.quantityHolder);
         intAmount = dialogView.findViewById(R.id.PickerAmount);
-        intAmount.setMaxValue(1000);
+        intAmount.setMaxValue(10000);
         intAmount.setMinValue(0);
 
         // Setup values if we've been passed an existing component
@@ -64,6 +70,7 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
                 textName.setText(components.json.getString("Name"));
                 switchQuantifiable.setChecked(components.json.getBoolean("Quantifiable"));
                 intAmount.setValue(components.json.getInt("Amount"));
+                textUnits.setText(components.json.optString("Units", ""));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -73,7 +80,7 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
         dialogView.findViewById(R.id.SwitchQuantifiable).setOnClickListener(new Switch.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intAmount.setEnabled(((Switch) view).isChecked());
+                amountHolder.setEnabled(((Switch) view).isChecked());
             }
         });
 
@@ -84,30 +91,35 @@ public class MakeMealComponentDialogFragment extends DialogFragment {
                         String name = (textName.getText().toString());
                         boolean quantifiable = switchQuantifiable.isChecked();
                         int amount = intAmount.getValue();
-                        // Put the values into a json object
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("Name", name);
-                            jsonObject.put("Quantifiable", quantifiable);
-                            jsonObject.put("Amount", amount);
+                        String units = textUnits.getText().toString();
+                        if(name.length() > 0) {
+                            // Put the values into a json object
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("Name", name);
+                                jsonObject.put("Quantifiable", quantifiable);
+                                jsonObject.put("Amount", amount);
+                                jsonObject.put("Units", units);
 
-                            // Modify the component if we were passed one, otherwise create a new one
-                            if(components != null){
-                                ItemStorage.getInstance().modifyComponentByPosition(new ItemPass(components.file, jsonObject), position);
-                            } else {
-                                ItemStorage.getInstance().addNewComponent(jsonObject, getContext());
+                                // Modify the component if we were passed one, otherwise create a new one
+                                if (components != null) {
+                                    ItemStorage.getInstance().modifyComponentByPosition(new ItemPass(components.file, jsonObject), position);
+                                } else {
+                                    ItemStorage.getInstance().addNewComponent(jsonObject, getContext());
+                                }
+
+                                // Tell the fragment to update the list
+                                fragment.updateComponents();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-
-                            // Tell the fragment to update the list
-                            fragment.updateComponents();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        } else {
+                            Toast.makeText(getContext(), getContext().getString(R.string.mustName), Toast.LENGTH_SHORT).show();
                         }
-
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

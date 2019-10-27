@@ -29,4 +29,8 @@
     <string name="remove_step">Remove Step</string>
     <string name="add_step">Add Step</string>
     <string name="tooFewSteps">You must have atleast 1 step</string>
+    <string name="units">Units</string>
+    <string name="unitsDisplay">%1$s%2$s</string>
+    <string name="mustName">The component must have a name.</string>
+    <string name="itemDeleted">ITEM MISSING</string>
 </resources>
