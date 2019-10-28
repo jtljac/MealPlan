@@ -1,5 +1,6 @@
 package com.jacob.mealplan;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -16,12 +17,14 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 
 public class HorizontalNumberPicker extends LinearLayout {
-    private EditText number;
-    private int value = 0;
-    private Integer max, min;
-    private int step = 1;
-    private boolean wrap = true;
-    private String suffix = "";
+    //Variables
+    private EditText number;        // Reference to the number
+    private int value = 0;          // the actual held value
+    private Integer max, min;       // The maximum and minimum possible value
+    private int step = 1;           // How much to increment the number by with each button press
+    private boolean wrap = true;    // Enable wrapping the number so going over the max returns the min
+    private String suffix = "";     // The text before the displayed number
+    private String prefix = "";     // The text after the displayed number
 
     private static String STATE_SELECTED_NUMBER = "SelectedNumber";
 
@@ -56,8 +59,9 @@ public class HorizontalNumberPicker extends LinearLayout {
         add.setOnClickListener(new AddHandler());
     }
 
+    @SuppressLint("SetTextI18n")
     private void updateText(){
-        number.setText(String.valueOf(value) + suffix);
+        number.setText(prefix + String.valueOf(value) + suffix);
     }
 
     private class AddHandler implements OnClickListener {
@@ -108,8 +112,18 @@ public class HorizontalNumberPicker extends LinearLayout {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            String tempValue = editable.toString();
-            if(!tempValue.equals(value + suffix)) setValue(Integer.valueOf(tempValue));
+            String tempValue = editable.toString().replaceAll("[^\\d.]", "");
+            if(tempValue.length() > 0) {
+                if (!tempValue.equals(String.valueOf(value))) {
+                    try {
+                        setValue(Integer.valueOf(tempValue));
+                    } catch (NumberFormatException e) {
+                        updateText();
+                    }
+                }
+            } else {
+                updateText();
+            }
         }
     }
 
@@ -158,6 +172,15 @@ public class HorizontalNumberPicker extends LinearLayout {
 
     public void setWrap(boolean wrap) {
         this.wrap = wrap;
+    }
+
+    public String getprefix() {
+        return prefix;
+    }
+
+    public void setSprefix(String prefix) {
+        this.prefix = prefix;
+        updateText();
     }
 
     public String getSuffix() {
