@@ -22,11 +22,11 @@ public class ItemStorage {
     private static ItemStorage instance;
 
     // Meals
-    public SparseArray<ItemPass> meals = new SparseArray<ItemPass>();
+    public SparseArray<ItemPass> meals = new SparseArray<>();
     private int maxMealID = 0;
 
     // Meal Components
-    public SparseArray<ItemPass> components = new SparseArray<ItemPass>();
+    public SparseArray<ItemPass> components = new SparseArray<>();
     private int maxComponentID = 0;
 
     public static ItemStorage getInstance() {
@@ -38,7 +38,7 @@ public class ItemStorage {
         return instance;
     }
 
-    public void setup(Context context){
+    void setup(Context context){
         /*
          * Setup the meals and components
          */
@@ -46,7 +46,7 @@ public class ItemStorage {
         loadMeals(context);
     }
 
-    public void loadMeals(Context context){
+    private void loadMeals(Context context){
         /*
          * Load all of the meals stored on the phone into memory
          */
@@ -83,7 +83,7 @@ public class ItemStorage {
         }
     }
 
-    public void loadComponents(Context context){
+    private void loadComponents(Context context){
         /*
          * Load all of the components stored on the phone into memory
          */
@@ -147,7 +147,7 @@ public class ItemStorage {
         /*
          * Create a new meal, adding it to memory and stores the json in a file
          */
-        Integer id = maxMealID + 1;
+        int id = maxMealID + 1;
         item.put("ID", id);
         // Get the Meal Directory
         File dir = context.getDir("Meals", Context.MODE_PRIVATE);
@@ -192,12 +192,62 @@ public class ItemStorage {
         meals.append(key, item);
     }
 
+    public void deleteMealByKey(int key){
+        /*
+         * Delete a meal
+         * Takes the key of the meal to delete
+         */
+        ItemPass meal = meals.get(key);
+        meal.file.delete();
+        meals.remove(key);
+    }
+
+    public void deleteMealByPosition(int position){
+        /*
+         * Delete a meal
+         * Takes the position of the meal to delete
+         */
+        deleteMealByKey(meals.keyAt(position));
+    }
+
+    public void deleteComponentByKey(int key){
+        /*
+         * Delete a component
+         * Takes the key of the meal to delete
+         */
+        ItemPass component = components.get(key);
+        component.file.delete();
+        components.remove(key);
+    }
+
+    public void deleteAllMeals(){
+        for (int i=0; i < meals.size();i++){
+            meals.valueAt(i).file.delete();
+        }
+        meals.clear();
+    }
+
+    public void deleteComponentByPosition(int position){
+        /*
+         * Delete a component
+         * Takes the position of the meal to delete
+         */
+        deleteComponentByKey(components.keyAt(position));
+    }
+
     public void modifyMealByPosition(ItemPass item, int position) throws IOException {
         /*
          * Modify a Meal
          * Takes the item to modify, and the position of the object
          */
         modifyMealByKey(item, meals.keyAt(position));
+    }
+
+    public void deleteAllComponents(){
+        for (int i=0; i < components.size();i++){
+            components.valueAt(i).file.delete();
+        }
+        components.clear();
     }
 
     private void checkMaxComponentID(int id){

@@ -84,8 +84,7 @@ public class MealComponentRecyclerViewAdapter extends RecyclerView.Adapter<MealC
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        ItemStorage.getInstance().components.valueAt(position).file.delete();
-        ItemStorage.getInstance().components.removeAt(position);
+        ItemStorage.getInstance().deleteComponentByPosition(position);
         notifyItemRemoved(position);
         showUndoSnackbar();
     }
